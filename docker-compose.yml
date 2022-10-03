@@ -13,6 +13,7 @@ services:
     ports:
       - 8888:8080
     network_mode: bridge
+
   selenoid:
     image: aerokube/selenoid:latest-release
     volumes:
@@ -26,6 +27,7 @@ services:
     ports:
       - "4444:4444"
     network_mode: bridge
+
   selenoid-ui:
     image: "aerokube/selenoid-ui:latest-release"
     network_mode: bridge
