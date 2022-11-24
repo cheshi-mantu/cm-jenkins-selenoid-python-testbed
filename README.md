@@ -264,5 +264,101 @@ Jenkins готов к дальнейшей работе.
 
 ### Добавить аллюровский плагин
 
-
 ### Настроить пайплайн
+
+Не забыть, что нужно пробросить `REMOTE_DRV` в переменной окружения.
+
+#### Через файл .env и echo
+
+```groovy
+pipeline {
+    agent any
+
+    stages {
+        stage('Hello') {
+            steps {
+                git branch: 'main', url: 'https://github.com/cheshi-mantu/cm-py-demoqa-remote-wdr.git'
+            }
+        }
+    stage('set-env') {
+        steps {
+            sh 'echo REMOTE_DRV=http://<IP_ADDR>:4444/wd/hub > .env'
+        }
+    }
+
+    stage('run-python-tests') {
+        steps {
+                catchError(buildResult: 'UNSTABLE', message: 'uh oh', stageResult: 'UNSTABLE') {
+                    sh 'pytest tests --alluredir=allure-results'
+            }
+        }
+    }
+        stage('reporting') {
+        steps {
+            allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
+        }
+    }
+    }
+}
+```
+
+#### Через файл .env и его создание
+
+```groovy
+pipeline {
+    agent any
+
+    stages {
+        stage('code checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/cheshi-mantu/cm-py-demoqa-remote-wdr.git'
+                writeFile encoding: 'UTF-8', file: '.env', text: 'REMOTE_DRV=http://<IP_ADDR>:4444/wd/hub'
+            }
+        }
+        stage('running python tests') {
+            steps {
+                catchError(buildResult: 'UNSTABLE', message: 'uh-oh', stageResult: 'FAILURE') {
+                        sh 'pytest tests --alluredir=allure-results' 
+
+            }
+        }
+    }
+        stage('generate allure repport') {
+            steps {
+                allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
+            }
+        }
+    }
+}
+```
+
+
+#### Через withEnv
+
+```groovy
+pipeline {
+    agent any
+
+    stages {
+        stage('Hello') {
+            steps {
+                git branch: 'alt-site', url: 'https://github.com/cheshi-mantu/cm-py-demoqa-remote-wdr.git'
+            }
+        }
+    stage('run-python-tests') {
+        steps {
+            withEnv(['REMOTE_DRV=http://<ADDRESS>:4444/wd/hub']) {
+                catchError(buildResult: 'UNSTABLE', message: 'uh oh', stageResult: 'UNSTABLE') {
+                    sh 'pytest tests --alluredir=allure-results'
+                }
+            }
+        }
+    }
+        stage('reporting') {
+        steps {
+            allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
+        }
+    }
+    }
+}
+```

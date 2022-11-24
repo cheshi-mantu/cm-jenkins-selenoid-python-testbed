@@ -1,0 +1,12 @@
+git
+github-api
+git-client
+credentials-binding
+credentials
+cloudbees-folder
+matrix-auth
+ws-cleanup
+workflow-aggregator
+pipeline-stage-view
+timestamper
+allure-jenkins:::https://dl.qameta.io/artifactory/bin/allure-testops-jenkins/3.29.0/allure-testops-jenkins-3.29.0.hpi

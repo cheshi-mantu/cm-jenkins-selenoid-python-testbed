@@ -4,9 +4,9 @@ services:
   jenkins:
     user: root
     restart: unless-stopped
-    #image: jenkins/jenkins:lts
-    build:
-      context: ./image
+    image: jenkins/jenkins:lts
+    # build:
+    #   context: ./image
 
     volumes:
       - ${PWD}/work/jenkins:/var/jenkins_home
